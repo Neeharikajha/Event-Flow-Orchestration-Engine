@@ -1,0 +1,33 @@
+# name: "User Onboarding Flow"
+# events:
+#   - id: "send_welcome_email"
+#     action: "emailService.sendWelcome"
+#     args: { userId: "{{event.userId}}" }
+#     next:
+#       - if: "{{success}}"
+#         then: "assign_credits"
+#       - if: "{{error}}"
+#         then: "alert_admin"
+
+#   - id: "assign_credits"
+#     action: "creditsService.addStarterCredits"
+#     args: { userId: "{{event.userId}}", amount: 100 }
+
+name: "User Onboarding Flow"
+events:
+  - id: "check_user_verified"
+    action: "authService.isVerified"
+    args: { userId: "{{event.userId}}" }
+    next:
+      - if: "{{output.verified}}"
+        then: "grant_dashboard_access"
+      - if: "!{{output.verified}}"
+        then: "send_verification_email"
+
+  - id: "grant_dashboard_access"
+    action: "dashboardService.grantAccess"
+    args: { userId: "{{event.userId}}" }
+
+  - id: "send_verification_email"
+    action: "emailService.sendVerification"
+    args: { userId: "{{event.userId}}" }
