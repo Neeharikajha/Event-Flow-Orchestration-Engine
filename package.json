@@ -4,26 +4,27 @@
   "description": "Distributed event orchestration with conditions + real-time dash",
   "main": "src/index.js",
   "type": "module",
+  "bin": {
+    "event-stormer": "./src/cli.js"
+  },
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "test": "jest"
   },
-  "keywords": [
-    "events",
-    "workflow",
-    "redis",
-    "orchestration"
-  ],
-  "author": "Neeharika",
-  "license": "MIT",
   "dependencies": {
+    "bullmq": "^5.36.3",
+    "express": "^4.21.2",
     "joi": "^17.13.3",
     "redis": "^5.6.0",
     "socket.io": "^4.8.1",
-    "yaml": "^2.8.0"
+    "yaml": "^2.8.0",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "jest": "^30.0.4",
     "nodemon": "^3.1.10"
-  }
+  },
+  "keywords": ["workflow", "events", "redis", "orchestration", "queue", "dashboard"],
+  "license": "MIT"
 }
