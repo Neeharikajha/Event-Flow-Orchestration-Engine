@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+// bin/processus-cli
+// CLI executable entry point
+
+import('../engine/cli.js').then(module => {
+  module.default();
+}).catch(err => {
+  console.error('Failed to start CLI:', err);
+  process.exit(1);
+});

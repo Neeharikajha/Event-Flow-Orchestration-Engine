@@ -1,30 +1,36 @@
 {
   "name": "event-stormer",
-  "version": "0.1.0",
-  "description": "Distributed event orchestration with conditions + real-time dash",
-  "main": "src/index.js",
+  "version": "2.0.0",
+  "description": "A simple workflow orchestration engine",
+  "main": "engine/api.js",
   "type": "module",
   "bin": {
-    "event-stormer": "./src/cli.js"
+    "processus-cli": "./bin/processus-cli"
   },
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "jest"
+    "start": "node bin/processus-cli",
+    "test": "node bin/processus-cli -f ./test/demo1.json -l info"
   },
+  "keywords": [
+    "workflow",
+    "orchestration",
+    "automation"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
   "dependencies": {
-    "bullmq": "^5.36.3",
-    "express": "^4.21.2",
+    "async": "^3.2.5",
+    "cli": "^1.0.1",
+    "dotenv": "^17.2.3",
+    "glob": "^10.3.10",
     "joi": "^17.13.3",
-    "redis": "^5.6.0",
-    "socket.io": "^4.8.1",
-    "yaml": "^2.8.0",
-    "winston": "^3.11.0"
+    "js-yaml": "^4.1.0",
+    "mongodb": "^6.3.0",
+    "underscore": "^1.13.6",
+    "uuid": "^9.0.1",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
-    "jest": "^30.0.4",
     "nodemon": "^3.1.10"
-  },
-  "keywords": ["workflow", "events", "redis", "orchestration", "queue", "dashboard"],
-  "license": "MIT"
+  }
 }

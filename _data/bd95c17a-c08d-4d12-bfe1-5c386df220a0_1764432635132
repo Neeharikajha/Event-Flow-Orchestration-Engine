@@ -1,0 +1,100 @@
+{
+  "name": "Demo1",
+  "description": "A demo showing 3 tasks in series.",
+  "tasks": {
+    "task 1": {
+      "description": "I am the task 1, I take 1500ms.",
+      "blocking": true,
+      "handler": "../taskHandlers/testHandler.js",
+      "parameters": {
+        "delay": 1500,
+        "error": false
+      },
+      "status": "waiting"
+    },
+    "task 2": {
+      "description": "I am the task 2, I take 1000ms.",
+      "blocking": true,
+      "handler": "../taskHandlers/testHandler.js",
+      "parameters": {
+        "delay": 1000,
+        "error": false
+      },
+      "status": "waiting"
+    },
+    "task 3": {
+      "description": "I am the task 3, I take 500ms.",
+      "blocking": true,
+      "handler": "../taskHandlers/testHandler.js",
+      "parameters": {
+        "delay": 500,
+        "error": false
+      },
+      "status": "waiting"
+    }
+  },
+  "environment": {
+    "ALLUSERSPROFILE": "C:\\ProgramData",
+    "APPDATA": "C:\\Users\\NEEHARIKA JHA\\AppData\\Roaming",
+    "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\crashpad_14128_IMUEYASPQBBNECEM",
+    "CommonProgramFiles": "C:\\Program Files\\Common Files",
+    "CommonProgramFiles(x86)": "C:\\Program Files (x86)\\Common Files",
+    "CommonProgramW6432": "C:\\Program Files\\Common Files",
+    "COMPUTERNAME": "DESKTOP-928HI0R",
+    "ComSpec": "C:\\WINDOWS\\system32\\cmd.exe",
+    "DB_DIR": "_data",
+    "DB_HOST": "localhost",
+    "DB_PORT": "27017",
+    "DB_TYPE": "file",
+    "DriverData": "C:\\Windows\\System32\\Drivers\\DriverData",
+    "EFC_19808_1592913036": "1",
+    "FPS_BROWSER_APP_PROFILE_STRING": "Internet Explorer",
+    "FPS_BROWSER_USER_PROFILE_STRING": "Default",
+    "HOMEDRIVE": "C:",
+    "HOMEPATH": "\\Users\\NEEHARIKA JHA",
+    "LOCALAPPDATA": "C:\\Users\\NEEHARIKA JHA\\AppData\\Local",
+    "LOGONSERVER": "\\\\DESKTOP-928HI0R",
+    "NUMBER_OF_PROCESSORS": "12",
+    "OneDrive": "C:\\Users\\NEEHARIKA JHA\\OneDrive",
+    "OneDriveConsumer": "C:\\Users\\NEEHARIKA JHA\\OneDrive",
+    "ORIGINAL_XDG_CURRENT_DESKTOP": "undefined",
+    "OS": "Windows_NT",
+    "Path": "c:\\Users\\NEEHARIKA JHA\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand;c:\\Users\\NEEHARIKA JHA\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\copilotCli;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\;C:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Programs\\Python\\Python313\\;C:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Programs\\Python\\Launcher\\;C:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\NEEHARIKA JHA\\AppData\\Roaming\\npm;C:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin",
+    "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL",
+    "PROCESSOR_ARCHITECTURE": "AMD64",
+    "PROCESSOR_IDENTIFIER": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "PROCESSOR_LEVEL": "25",
+    "PROCESSOR_REVISION": "5000",
+    "ProgramData": "C:\\ProgramData",
+    "ProgramFiles": "C:\\Program Files",
+    "ProgramFiles(x86)": "C:\\Program Files (x86)",
+    "ProgramW6432": "C:\\Program Files",
+    "PSModulePath": "C:\\Users\\NEEHARIKA JHA\\Documents\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules",
+    "PUBLIC": "C:\\Users\\Public",
+    "SESSIONNAME": "Console",
+    "SystemDrive": "C:",
+    "SystemRoot": "C:\\WINDOWS",
+    "TEMP": "C:\\Users\\NEEHAR~1\\AppData\\Local\\Temp",
+    "TEST_ENV": "HELLO_WORLD",
+    "TEST_TASKS_BLOCKING": "true",
+    "TMP": "C:\\Users\\NEEHAR~1\\AppData\\Local\\Temp",
+    "USERDOMAIN": "DESKTOP-928HI0R",
+    "USERDOMAIN_ROAMINGPROFILE": "DESKTOP-928HI0R",
+    "USERNAME": "NEEHARIKA JHA",
+    "USERPROFILE": "C:\\Users\\NEEHARIKA JHA",
+    "VSCODE_PYTHON_AUTOACTIVATE_GUARD": "1",
+    "windir": "C:\\WINDOWS",
+    "TERM_PROGRAM": "vscode",
+    "TERM_PROGRAM_VERSION": "1.106.3",
+    "LANG": "en_US.UTF-8",
+    "COLORTERM": "truecolor",
+    "GIT_ASKPASS": "c:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\git\\dist\\askpass.sh",
+    "VSCODE_GIT_ASKPASS_NODE": "C:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+    "VSCODE_GIT_ASKPASS_EXTRA_ARGS": "",
+    "VSCODE_GIT_ASKPASS_MAIN": "c:\\Users\\NEEHARIKA JHA\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\git\\dist\\askpass-main.js",
+    "VSCODE_GIT_IPC_HANDLE": "\\\\.\\pipe\\vscode-git-5f8aea36f2-sock",
+    "VSCODE_INJECTION": "1"
+  },
+  "status": "open",
+  "id": "bd95c17a-c08d-4d12-bfe1-5c386df220a0"
+}
