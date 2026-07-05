@@ -1,0 +1,56 @@
+[
+  {
+    "name": "BulkWorkflow1",
+    "description": "First workflow in bulk execution",
+    "tasks": {
+      "task1": {
+        "description": "Bulk workflow 1 - task 1",
+        "blocking": true,
+        "handler": "../taskHandlers/testHandler.js",
+        "parameters": { "delay": 1000, "error": false }
+      },
+      "task2": {
+        "description": "Bulk workflow 1 - task 2",
+        "blocking": true,
+        "handler": "../taskHandlers/testHandler.js",
+        "parameters": { "delay": 500, "error": false }
+      }
+    }
+  },
+  {
+    "name": "BulkWorkflow2",
+    "description": "Second workflow in bulk execution",
+    "tasks": {
+      "task1": {
+        "description": "Bulk workflow 2 - task 1",
+        "blocking": true,
+        "handler": "../taskHandlers/testHandler.js",
+        "parameters": { "delay": 800, "error": false }
+      },
+      "task2": {
+        "description": "Bulk workflow 2 - task 2",
+        "blocking": true,
+        "handler": "../taskHandlers/testHandler.js",
+        "parameters": { "delay": 600, "error": false }
+      }
+    }
+  },
+  {
+    "name": "BulkWorkflow3",
+    "description": "Third workflow in bulk execution",
+    "tasks": {
+      "task1": {
+        "description": "Bulk workflow 3 - task 1",
+        "blocking": true,
+        "handler": "../taskHandlers/testHandler.js",
+        "parameters": { "delay": 1200, "error": false }
+      },
+      "task2": {
+        "description": "Bulk workflow 3 - task 2",
+        "blocking": true,
+        "handler": "../taskHandlers/testHandler.js",
+        "parameters": { "delay": 400, "error": false }
+      }
+    }
+  }
+]

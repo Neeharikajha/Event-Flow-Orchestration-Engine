@@ -1,0 +1,57 @@
+name: Demo2-QueueRetry-YAML
+description: Testing queue system with priority, retry, and parallel tasks (YAML format)
+
+tasks:
+  high-priority-task:
+    description: High priority task - should execute first
+    blocking: true
+    handler: ../taskHandlers/testHandler.js
+    parameters:
+      delay: 2000
+      error: false
+      message: HIGH PRIORITY - Executing first
+  
+  parallel-task-1:
+    description: Parallel task 1 - runs concurrently
+    blocking: false
+    handler: ../taskHandlers/testHandler.js
+    parameters:
+      delay: 3000
+      error: false
+      message: Parallel 1 running
+  
+  parallel-task-2:
+    description: Parallel task 2 - runs concurrently
+    blocking: false
+    handler: ../taskHandlers/testHandler.js
+    parameters:
+      delay: 3000
+      error: false
+      message: Parallel 2 running
+  
+  retry-task:
+    description: Task that might fail - will retry with exponential backoff
+    blocking: true
+    handler: ../taskHandlers/testHandler.js
+    parameters:
+      delay: 1000
+      error: false
+      message: Retry task - attempt
+  
+  fallback-task:
+    description: Task with fallback handler
+    blocking: true
+    handler: ../taskHandlers/testHandler.js
+    parameters:
+      delay: 1500
+      error: false
+      message: Task with fallback support
+  
+  final-task:
+    description: Final task - completes workflow
+    blocking: true
+    handler: ../taskHandlers/testHandler.js
+    parameters:
+      delay: 500
+      error: false
+      message: Workflow complete!
