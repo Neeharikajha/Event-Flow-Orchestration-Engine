@@ -239,6 +239,19 @@ export class ProcessusEngine {
     });
   }
 
+  // Get multiple workflows from persistence
+  async getWorkflows(query = {}) {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+    return new Promise((resolve, reject) => {
+      store.getWorkflows(query, (err, workflows) => {
+        if (err) reject(err);
+        else resolve(workflows);
+      });
+    });
+  }
+
   // Get system statistics
   async getStats() {
     if (!this.initialized) {

@@ -556,8 +556,8 @@
 // api.js
 // Updated API with integrated ProcessusEngine
 
-import logger from './engine/logger.js';
-import { ProcessusEngine } from './engine/ProcessusEngine.js';
+import logger from './logger.js';
+import { ProcessusEngine } from './ProcessusEngine.js';
 
 // Create engine instance
 let engine = null;
@@ -570,6 +570,8 @@ export async function init(config = {}) {
   }
   return engine;
 }
+
+export const initAsync = init;
 
 // Initialize with callback
 export function initCallback(config, callback) {
@@ -663,6 +665,25 @@ export function getWorkflowStatus(workflowIdOrJobId, isJobId, callback) {
   
   getWorkflowStatusAsync(workflowIdOrJobId, isJobId)
     .then(status => callback(null, status))
+    .catch(err => callback(err));
+}
+
+// Get list of workflows
+export async function getWorkflowsAsync(query = {}) {
+  if (!engine) {
+    await init();
+  }
+  return await engine.getWorkflows(query);
+}
+
+// Get list of workflows with callback
+export function getWorkflows(query, callback) {
+  if (typeof query === 'function') {
+    callback = query;
+    query = {};
+  }
+  getWorkflowsAsync(query)
+    .then(workflows => callback(null, workflows))
     .catch(err => callback(err));
 }
 
@@ -770,6 +791,8 @@ export default {
   // Workflow management
   getWorkflowStatus,
   getWorkflowStatusAsync,
+  getWorkflows,
+  getWorkflowsAsync,
   registerFallback,
   
   // System operations

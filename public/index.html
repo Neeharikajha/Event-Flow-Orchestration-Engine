@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Flow Orchestrator Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <i class="fa-solid fa-network-wired"></i>
+        <span>EventFlow</span>
+      </div>
+      <nav class="nav-menu">
+        <button class="nav-btn active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-line"></i> Dashboard
+        </button>
+        <button class="nav-btn" data-tab="run">
+          <i class="fa-solid fa-play"></i> Run Pipeline
+        </button>
+        <button class="nav-btn" data-tab="history">
+          <i class="fa-solid fa-history"></i> Execution Logs
+        </button>
+        <button class="nav-btn" data-tab="dlq">
+          <i class="fa-solid fa-skull-crossbones"></i> DLQ Manager
+          <span class="badge dlq-badge" id="dlq-badge-count">0</span>
+        </button>
+      </nav>
+      <div class="engine-control">
+        <div class="status-indicator-wrapper">
+          <span class="dot active" id="engine-status-dot"></span>
+          <span id="engine-status-text">Engine: Running</span>
+        </div>
+        <button id="btn-toggle-engine" class="control-btn mini-btn">
+          <i class="fa-solid fa-pause"></i> Pause Engine
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="top-header">
+        <h1>Orchestration Control Center</h1>
+        <div class="refresh-controls">
+          <span class="refresh-time" id="last-updated">Last updated: Just now</span>
+          <button id="btn-refresh" class="icon-btn"><i class="fa-solid fa-sync"></i></button>
+        </div>
+      </header>
+
+      <!-- Dashboard Tab -->
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="stats-grid">
+          <div class="card stat-card total">
+            <div class="icon-box"><i class="fa-solid fa-list-check"></i></div>
+            <div class="stat-info">
+              <h3>Total Jobs</h3>
+              <p id="stat-total">0</p>
+            </div>
+          </div>
+          <div class="card stat-card success">
+            <div class="icon-box"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-info">
+              <h3>Succeeded</h3>
+              <p id="stat-success">0</p>
+            </div>
+          </div>
+          <div class="card stat-card active-jobs">
+            <div class="icon-box"><i class="fa-solid fa-spinner spinner"></i></div>
+            <div class="stat-info">
+              <h3>Processing</h3>
+              <p id="stat-active">0</p>
+            </div>
+          </div>
+          <div class="card stat-card failed">
+            <div class="icon-box"><i class="fa-solid fa-circle-xmark"></i></div>
+            <div class="stat-info">
+              <h3>Failed (DLQ)</h3>
+              <p id="stat-failed">0</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-details">
+          <div class="card active-workflows-card">
+            <div class="card-header">
+              <h2>Running / Queued Workflows</h2>
+              <span class="badge info" id="active-jobs-count">0 Active</span>
+            </div>
+            <div class="table-container">
+              <table id="table-active-jobs">
+                <thead>
+                  <tr>
+                    <th>Job ID</th>
+                    <th>Workflow</th>
+                    <th>Progress</th>
+                    <th>State</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="active-jobs-list">
+                  <!-- Active jobs loaded dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card throughput-card">
+            <div class="card-header">
+              <h2>Queue Statistics</h2>
+            </div>
+            <div class="stats-list">
+              <div class="stat-row">
+                <span>Concurrency limit (Tasks):</span>
+                <span id="stat-concurrency-tasks">100</span>
+              </div>
+              <div class="stat-row">
+                <span>Concurrency limit (Workflows):</span>
+                <span id="stat-concurrency-workflows">50</span>
+              </div>
+              <div class="stat-row">
+                <span>Redis Host:</span>
+                <span id="stat-redis-host">localhost</span>
+              </div>
+              <div class="stat-row">
+                <span>Retry Strategy:</span>
+                <span id="stat-retry-strategy">exponential</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Run Tab -->
+      <section id="tab-run" class="tab-content">
+        <div class="run-container">
+          <div class="card editor-card">
+            <div class="card-header">
+              <h2>Deploy & Trigger Pipeline</h2>
+              <div class="format-toggle">
+                <button class="toggle-btn active" id="format-yaml">YAML</button>
+                <button class="toggle-btn" id="format-json">JSON</button>
+              </div>
+            </div>
+            <div class="editor-wrapper">
+              <textarea id="pipeline-editor" placeholder="Paste your pipeline configuration here..."></textarea>
+            </div>
+            <div class="editor-controls">
+              <div class="input-group">
+                <label for="pipeline-priority">Priority:</label>
+                <select id="pipeline-priority">
+                  <option value="0">High Priority (0)</option>
+                  <option value="1">Medium Priority (1)</option>
+                  <option value="2">Low Priority (2)</option>
+                </select>
+              </div>
+              <button id="btn-trigger-pipeline" class="btn primary-btn">
+                <i class="fa-solid fa-bolt"></i> Execute Pipeline
+              </button>
+            </div>
+          </div>
+
+          <div class="card templates-card">
+            <div class="card-header">
+              <h2>Quick Templates</h2>
+            </div>
+            <div class="template-list">
+              <button class="template-item" data-template="onboarding">
+                <span class="title">User Onboarding Flow</span>
+                <span class="desc">Includes verification checks, welcome email, and credit allocation.</span>
+              </button>
+              <button class="template-item" data-template="order">
+                <span class="title">E-Commerce Purchase Flow</span>
+                <span class="desc">Processes payments, updates inventory, and handles fallback refunds.</span>
+              </button>
+              <button class="template-item" data-template="demo">
+                <span class="title">Basic Demo Workflow</span>
+                <span class="desc">A simple test pipeline with success/error branching.</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- History Tab -->
+      <section id="tab-history" class="tab-content">
+        <div class="card full-width-card">
+          <div class="card-header">
+            <h2>Execution History & Audits</h2>
+            <div class="search-box">
+              <i class="fa-solid fa-search"></i>
+              <input type="text" id="history-search" placeholder="Search by Workflow Name or ID...">
+            </div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Instance ID</th>
+                  <th>Workflow Name</th>
+                  <th>Status</th>
+                  <th>Completed Steps</th>
+                  <th>Timestamp</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="history-list">
+                <!-- History list loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- DLQ Manager Tab -->
+      <section id="tab-dlq" class="tab-content">
+        <div class="card full-width-card">
+          <div class="card-header border-danger">
+            <h2>Dead-Letter Queue (DLQ) Manager</h2>
+            <span class="badge danger" id="dlq-count">0 Failed</span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Instance ID</th>
+                  <th>Workflow Name</th>
+                  <th>Failed Step</th>
+                  <th>Error Description</th>
+                  <th>Time Failed</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dlq-list">
+                <!-- DLQ items loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal for Workflow Detail View -->
+  <div class="modal" id="workflow-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Workflow Detail</h2>
+        <button class="close-btn" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+</body>
+</html>

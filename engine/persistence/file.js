@@ -201,11 +201,42 @@ export async function loadInstance(id, rewind, callback) {
   }
 }
 
-// Get workflows (not implemented for file storage)
-export function getWorkflows(query, callback) {
-  callback(
-    new Error("getWorkflows is not implemented in file type storage, use mongo.")
-  );
+// Get workflows from file storage
+export async function getWorkflows(query, callback) {
+  try {
+    const dir = gConfig.dataDirectory || '_data';
+    const files = await fs.readdir(dir);
+    const workflows = [];
+    for (const file of files) {
+      if (file.includes('_') || file.startsWith('.')) continue;
+      const filePath = path.join(dir, file);
+      try {
+        const stat = await fs.stat(filePath);
+        if (stat.isFile()) {
+          const data = await fs.readFile(filePath, 'utf8');
+          const wf = JSON.parse(data);
+          let match = true;
+          if (query && typeof query === 'object') {
+            for (const key of Object.keys(query)) {
+              if (wf[key] !== query[key]) {
+                match = false;
+                break;
+              }
+            }
+          }
+          if (match) {
+            workflows.push(wf);
+          }
+        }
+      } catch (err) {
+        logger.warn(`Failed to read/parse workflow file ${file}: ${err.message}`);
+      }
+    }
+    callback(null, workflows);
+  } catch (err) {
+    logger.error(`❌ Failed to get workflows: ${err.message}`);
+    callback(err, null);
+  }
 }
 
 // Initialize file store

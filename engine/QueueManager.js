@@ -1,7 +1,7 @@
 // engine/QueueManager.js
 // BullMQ Integration for 1000+ distributed jobs/min with retry and priority control
 
-import { Queue, Worker, QueueScheduler } from 'bullmq';
+import { Queue, Worker } from 'bullmq';
 import { createClient } from 'redis';
 import logger from './logger.js';
 
@@ -68,12 +68,6 @@ export class QueueManager {
       });
 
       this.queues.set(queueName, queue);
-      
-      // Create scheduler for delayed jobs
-      const scheduler = new QueueScheduler(queueName, {
-        connection: this.connection
-      });
-      this.schedulers.set(queueName, scheduler);
 
       logger.info(`📋 Created queue: ${queueName}`);
     }
