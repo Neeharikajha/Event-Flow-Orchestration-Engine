@@ -9,7 +9,9 @@
   },
   "scripts": {
     "start": "node bin/processus-cli",
-    "test": "node bin/processus-cli -f ./test/demo1.json -l info"
+    "test": "node bin/processus-cli -f ./test/demo1.json -l info",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build"
   },
   "keywords": [
     "workflow",
