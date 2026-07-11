@@ -1,12 +1,20 @@
 {
   "name": "event-stormer",
   "version": "2.0.0",
-  "description": "A simple workflow orchestration engine",
+  "description": "Distributed event-driven orchestration system built on Node.js, Redis, and BullMQ",
   "main": "engine/api.js",
   "type": "module",
   "bin": {
     "processus-cli": "./bin/processus-cli"
   },
+  "files": [
+    "engine",
+    "taskHandlers",
+    "public",
+    "server.js",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "start": "node bin/processus-cli",
     "test": "node bin/processus-cli -f ./test/demo1.json -l info",
@@ -16,9 +24,13 @@
   "keywords": [
     "workflow",
     "orchestration",
-    "automation"
+    "automation",
+    "redis",
+    "bullmq",
+    "event-driven",
+    "pipelines"
   ],
-  "author": "Your Name",
+  "author": "Neeharika Jha",
   "license": "MIT",
   "dependencies": {
     "async": "^3.2.5",
