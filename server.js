@@ -23,6 +23,7 @@ api.initAsync({ useQueue: true })
   .then(() => console.log('🚀 Orchestration Engine initialized successfully with Queue support (Redis)'))
   .catch(err => {
     console.warn('⚠️ Failed to initialize engine with Queue support (Redis may not be running).');
+    console.error('   Redis Connection Error Details:', err);
     console.warn('🔄 Falling back to Direct Execution mode (no Redis queue required).');
     api.initAsync({ useQueue: false })
       .then(() => console.log('🚀 Orchestration Engine initialized successfully in Direct Execution mode'))
@@ -67,13 +68,23 @@ app.get('/api/workflows/:id/status', async (req, res) => {
 app.post('/api/workflows/run', async (req, res) => {
   try {
     let workflowDef;
+    let priority = 0;
 
     // Handle YAML text body
     if (req.headers['content-type'] === 'application/yaml' || req.headers['content-type'] === 'text/yaml') {
       workflowDef = yaml.load(req.body);
     } else {
-      // Handle standard JSON body
-      workflowDef = req.body;
+      // Handle JSON body (check if wrapped by frontend)
+      if (req.body && (req.body.yamlString !== undefined || req.body.jsonObj !== undefined)) {
+        priority = req.body.priority || 0;
+        if (req.body.yamlString !== undefined) {
+          workflowDef = yaml.load(req.body.yamlString);
+        } else {
+          workflowDef = req.body.jsonObj;
+        }
+      } else {
+        workflowDef = req.body;
+      }
     }
 
     if (!workflowDef || !workflowDef.name) {
@@ -82,7 +93,7 @@ app.post('/api/workflows/run', async (req, res) => {
 
     // Run using queue (uses BullMQ/Redis)
     const result = await api.queueWorkflowAsync(workflowDef, {
-      priority: req.body.priority || 0,
+      priority: priority,
       retry: true
     });
 
@@ -153,6 +164,33 @@ app.post('/api/engine/resume', async (req, res) => {
   try {
     await api.resumeAsync();
     res.json({ success: true, message: 'Engine processing resumed' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 9. Delete a specific workflow instance
+app.delete('/api/workflows/:id', async (req, res) => {
+  try {
+    const workflowId = req.params.id;
+    const store = (await import('./engine/persistence/store.js')).default;
+    await new Promise((resolve, reject) => {
+      store.deleteInstance(workflowId, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+    res.json({ success: true, message: 'Workflow deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 10. Reset/Clear all workflows
+app.delete('/api/workflows', async (req, res) => {
+  try {
+    await api.cleanupAsync();
+    res.json({ success: true, message: 'All workflows cleared successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

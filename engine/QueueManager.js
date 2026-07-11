@@ -2,7 +2,7 @@
 // BullMQ Integration for 1000+ distributed jobs/min with retry and priority control
 
 import { Queue, Worker } from 'bullmq';
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 import logger from './logger.js';
 
 export class QueueManager {
@@ -31,8 +31,11 @@ export class QueueManager {
   // Initialize connection
   async connect() {
     try {
-      this.connection = createClient(this.redisConfig);
-      await this.connection.connect();
+      this.connection = new Redis({
+        host: this.redisConfig.host,
+        port: this.redisConfig.port,
+        maxRetriesPerRequest: null
+      });
       logger.info('✅ QueueManager connected to Redis');
       
       // Start throughput monitoring
