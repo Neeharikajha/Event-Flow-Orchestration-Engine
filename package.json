@@ -1,11 +1,12 @@
 {
   "name": "@neeharikaa/event-stormer",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Distributed event-driven orchestration system built on Node.js, Redis, and BullMQ",
   "main": "engine/api.js",
   "type": "module",
   "bin": {
-    "processus-cli": "./bin/processus-cli"
+    "processus-cli": "./bin/processus-cli",
+    "event-stormer-dashboard": "./server.js"
   },
   "files": [
     "engine",

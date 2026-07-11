@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // server.js
 // Express REST API Server for Event Flow Orchestration Engine
 
