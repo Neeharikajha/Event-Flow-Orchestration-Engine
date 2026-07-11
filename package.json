@@ -1,5 +1,5 @@
 {
-  "name": "event-stormer",
+  "name": "@neeharikaa/event-stormer",
   "version": "2.0.0",
   "description": "Distributed event-driven orchestration system built on Node.js, Redis, and BullMQ",
   "main": "engine/api.js",
