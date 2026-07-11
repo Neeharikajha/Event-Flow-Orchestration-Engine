@@ -1,6 +1,6 @@
 {
   "name": "@neeharikaa/event-stormer",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Distributed event-driven orchestration system built on Node.js, Redis, and BullMQ",
   "main": "engine/api.js",
   "type": "module",

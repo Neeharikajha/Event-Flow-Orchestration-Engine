@@ -74,8 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
               
               <!-- CTA Actions -->
               <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center justify-center">
-                <a href="https://www.npmjs.com" target="_blank" class="w-full sm:w-auto px-7 py-3 bg-[#11121a] hover:bg-[#161722] border border-[#1f2231] text-gray-300 font-semibold text-xs font-mono rounded-lg transition duration-150 shadow-md flex items-center justify-center gap-2">
-                  <i class="fa-brands fa-npm text-[#cb3837] text-xl"></i> npm i event-stormer
+                <a href="https://www.npmjs.com/package/@neeharikaa/event-stormer" target="_blank" class="w-full sm:w-auto px-7 py-3 bg-[#11121a] hover:bg-[#161722] border border-[#1f2231] text-gray-300 font-semibold text-xs font-mono rounded-lg transition duration-150 shadow-md flex items-center justify-center gap-2">
+                  <i class="fa-brands fa-npm text-[#cb3837] text-xl"></i> npm i @neeharikaa/event-stormer
                 </a>
                 <button id="btn-goto-dashboard" class="w-full sm:w-auto px-7 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg transition duration-150 shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 cursor-pointer">
                   Go to Dashboard <i class="fa-solid fa-chevron-right text-[10px]"></i>
