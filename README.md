@@ -1,42 +1,42 @@
 # @neeharikaa/event-stormer
 
-A production-ready, distributed event-driven orchestration engine built on **Node.js**, **Redis**, and **BullMQ**. Define execution pipelines in YAML/JSON, automatically track state persistence (in local JSON database or MongoDB), and isolate faults with automatic retries and dead-letter queues (DLQ).
+A production-ready, distributed event-driven orchestration engine built on Node.js, Redis, and BullMQ. Define execution pipelines in YAML/JSON, automatically track state persistence (in local JSON database or MongoDB), and isolate faults with automatic retries and dead-letter queues (DLQ).
 
 ---
 
-## 🛑 The Problem Statement
+## The Problem Statement
 
-In modern backend architectures, event-driven processes (like user signups, multi-step reports, image uploads, and billing syncs) require coordinating multiple actions sequentially or in parallel. 
+Coordinating multi-step asynchronous actions in Node.js backends often leads to fragile and unmanageable event flows. 
 
-Without an orchestration engine, developers fall into the trap of:
-* **Callback/Promise Hell**: Deeply nested, fragile asynchronous code.
-* **State Loss**: If the server crashes mid-process, there is no automatic state recovery.
-* **Lack of Isolation**: A failure in one minor task (e.g. sending a Slack notification) crashes the entire transaction.
-* **Lack of Visibility**: Zero visual debugging to see which steps succeeded or failed.
+Without a structured engine, developer setups suffer from:
+* Callback and Promise Hell: Deeply nested, fragile asynchronous code logic.
+* State Loss: If the server crashes mid-process, there is no automatic state recovery.
+* Lack of Isolation: A failure in one minor task crashes the entire execution pipeline.
+* Lack of Visibility: No unified method to track which tasks succeeded, retried, or failed.
 
-**eventFlow** solves this by providing a lightweight framework that structures your operations as clean pipelines with built-in retries, persistence, and a live web dashboard.
+eventFlow resolves this by providing a lightweight framework that structures your operations as clean pipelines with built-in retries, persistence, and a live web dashboard.
 
 ---
 
-## ⚙️ Installation
+## Installation
 
-Install `@neeharikaa/event-stormer` in your project:
+Install @neeharikaa/event-stormer in your project:
 ```bash
 npm install @neeharikaa/event-stormer
 ```
 
-Make sure you have a **Redis** instance running on `localhost:6379`.
+Make sure you have a Redis instance running on localhost:6379.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Run the Dashboard
 You can view and trigger your pipelines using our built-in web dashboard:
 ```bash
 npx event-stormer-dashboard
 ```
-Open **`http://localhost:3000`** in your browser.
+Open http://localhost:3000 in your browser.
 
 ### 2. Run from JavaScript
 Initialize the engine and queue a workflow:
@@ -48,27 +48,28 @@ await eventFlow.initAsync({ useQueue: true });
 
 // Define your pipeline
 const pipelineYaml = `
-name: "Media Optimization Flow"
-description: "Compresses uploaded images and saves CDN metadata"
+name: "AWS S3 Auto-Backup Flow"
+description: "Pushes local assets to S3 and registers the transaction"
 tasks:
-  compress_image:
-    description: "Resizing uploaded media"
+  upload_to_s3:
+    description: "Uploading files to S3 bucket: eventflow-backups-us-east-1"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
     parameters:
-      delay: 800
+      delay: 1200
       error: false
-  write_cdn_log:
-    description: "Saving image metadata to disk"
+  register_backup_db:
+    description: "Saves S3 transaction metadata locally"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
     parameters:
       file:
-        name: "./cdn_assets.json"
+        name: "./s3_backup_receipt.json"
         contents: {
-          assetId: "IMG-991823",
-          compressed: true,
-          sizeKb: 284
+          s3_url: "s3://eventflow-backups-us-east-1/backups/db-backup.tar.gz",
+          bytes_uploaded: 45291880,
+          region: "us-east-1",
+          status: "SUCCESSFUL"
         }
 `;
 
@@ -79,108 +80,116 @@ console.log(`Pipeline enqueued successfully! Job ID: ${result.jobId}`);
 
 ---
 
-## 🛠️ Daily Developer Use Cases
+## Daily Developer Use Cases
 
 Here are three real-world pipelines that developers run on a daily basis:
 
-### Use Case 1: E-Commerce Order Fulfillment
-* **What it does**: Process order details, verifies inventory, writes shipping details to local logs, and prints confirmation alerts.
+### Use Case 1: AWS Database S3 Backup Sync
+* What it does: Uploads database assets to S3 and writes a local JSON receipt file.
 ```yaml
-name: "Order Processing Pipeline"
-description: "Verifies stock, saves confirmation invoice, and notifies warehouse"
+name: "AWS S3 Auto-Backup Flow"
+description: "Pushes local assets to S3 and registers the transaction"
 tasks:
-  verify_inventory:
-    description: "Checking stock allocation in warehouse"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
-    parameters:
-      delay: 500
-      error: false
-  save_invoice:
-    description: "Writing sales receipt to disk"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
-    parameters:
-      file:
-        name: "./invoice_receipt.json"
-        contents: {
-          orderId: "ORD-99182",
-          amount: 249.99,
-          status: "PAID"
-        }
-  alert_shipping:
-    description: "Logging dispatch notification details"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/logHandler.js"
-    parameters:
-      level: "info"
-      log: "🚚 Order ORD-99182 successfully dispatched to shipping queue."
-```
-
-### Use Case 2: Multi-Region Backup Verification & Recovery Sync
-* **What it does**: Simulates checking the health of database replicas, syncing local backups to backup storage, and logging results with built-in retries.
-```yaml
-name: "Backup Sync & Verification"
-description: "Syncs primary backup logs to cold storage with automatic retries"
-tasks:
-  check_database_health:
-    description: "Verifying primary DB replica status"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
-    parameters:
-      delay: 600
-  sync_logs:
-    description: "Uploading database logs to recovery storage"
+  upload_to_s3:
+    description: "Uploading files to S3 bucket: eventflow-backups-us-east-1"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
     parameters:
       delay: 1200
       error: false
-      attempts: 3
-      backoff: 1000
-  write_sync_report:
-    description: "Writes local sync checksum manifest"
+  register_backup_db:
+    description: "Saves S3 transaction metadata locally"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
     parameters:
       file:
-        name: "./sync_report.json"
+        name: "./s3_backup_receipt.json"
         contents: {
-          nodes_synced: 3,
-          checksum: "sha256-4cfb82...",
-          status: "ACTIVE_BACKUP"
+          s3_url: "s3://eventflow-backups-us-east-1/backups/db-backup.tar.gz",
+          bytes_uploaded: 45291880,
+          region: "us-east-1",
+          status: "SUCCESSFUL"
         }
-```
-
-### Use Case 3: User Verification & Platform Onboarding
-* **What it does**: Verifies user profile setup, registers their access permissions, and logs system warnings if their profile details are incomplete.
-```yaml
-name: "User Platform Onboarding"
-description: "Verifies user profiles and grants dashboard system access"
-tasks:
-  verify_user_account:
-    description: "Validating user account credentials"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
-    parameters:
-      delay: 400
-  log_activation:
-    description: "Logging profile activation confirmation details"
+  alert_completion:
+    description: "Notifies team channels of successful backup"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/logHandler.js"
     parameters:
       level: "info"
-      log: "👤 User Account verified. Granting console permissions..."
-  save_profile_data:
-    description: "Writes user setup metadata payload locally"
+      log: "[AWS-S3] Backup successfully verified. Object URL: s3://eventflow-backups-us-east-1/backups/db-backup.tar.gz"
+```
+
+### Use Case 2: DevOps Database Migration Rollback Checker
+* What it does: Verifies active migration logs, executes a rollback task on failure, and stores a rollback manifest.
+```yaml
+name: "Database Migration Rollback Flow"
+description: "Checks migration status and triggers database rollback on warning thresholds"
+tasks:
+  verify_migration_status:
+    description: "Checking migration error status logs"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
+    parameters:
+      delay: 500
+      error: false
+  trigger_rollback:
+    description: "Executing rollback script for database recovery"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
+    parameters:
+      delay: 1500
+      error: false
+  write_rollback_receipt:
+    description: "Saving rollback action log locally"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
     parameters:
       file:
-        name: "./user_profile_manifest.json"
+        name: "./db_rollback_manifest.json"
         contents: {
-          role: "Developer",
-          enabled: true,
-          plan: "Pro"
+          status: "ROLLED_BACK",
+          version: "V1.0.4",
+          timestamp: "2026-07-12T00:50:00Z"
         }
+  notify_admin:
+    description: "Logs rollback operation details"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/logHandler.js"
+    parameters:
+      level: "warn"
+      log: "[DEVOPS] Rollback executed successfully for version V1.0.4"
+```
+
+### Use Case 3: API Rate Limit Monitoring & Webhook Alerting
+* What it does: Monitors request telemetry logs, writes an alert payload file, and prints warning alerts to console logs.
+```yaml
+name: "API Rate Limit Monitoring"
+description: "Monitors client traffic telemetry logs and dispatches system warnings"
+tasks:
+  analyze_rate_limits:
+    description: "Scanning host connection rate telemetry"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
+    parameters:
+      delay: 600
+  write_incident_report:
+    description: "Writing rate limit alert info locally"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
+    parameters:
+      file:
+        name: "./api_alert_report.json"
+        contents: {
+          ip_blocked: "192.168.1.45",
+          attempts: 120,
+          limit: 60,
+          status: "ALERT_TRIGGERED"
+        }
+  log_incident:
+    description: "Prints incident log details to warning logs"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/logHandler.js"
+    parameters:
+      level: "warn"
+      log: "[TRAFFIC-MONITOR] IP 192.168.1.45 blocked due to exceeding rate limit of 60 req/min"
 ```

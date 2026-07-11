@@ -1,10 +1,10 @@
 # eventFlow: Distributed Event-Driven Orchestration Engine
 
-Welcome to **eventFlow** (published on NPM as `@neeharikaa/event-stormer`)! This is an open-source event-driven orchestration system built on Node.js, Redis, and BullMQ, featuring a glowing dark-themed dashboard.
+Welcome to eventFlow (published on NPM as @neeharikaa/event-stormer). This is an open-source event-driven orchestration system built on Node.js, Redis, and BullMQ, featuring a clean dark-themed dashboard.
 
 ---
 
-## 🚀 Getting Started (Local Development)
+## Getting Started (Local Development)
 
 ### 1. Clone the repository
 ```bash
@@ -15,11 +15,11 @@ cd Event-Flow-Orchestration-Engine
 ### 2. Install dependencies
 ```bash
 npm install
-npm run install:all # Installs both root and frontend dependencies
+npm run install:all
 ```
 
 ### 3. Start Redis Server
-Ensure you have a Redis server running on `localhost:6379`.
+Ensure you have a Redis server running on localhost:6379.
 
 ### 4. Build and run
 To compile the dashboard frontend assets and start the server:
@@ -27,11 +27,11 @@ To compile the dashboard frontend assets and start the server:
 npm run frontend:build
 node server.js
 ```
-Open **`http://localhost:3000`** in your browser.
+Open http://localhost:3000 in your browser.
 
 ---
 
-## 📦 How to use this package in your own Project
+## How to use this package in your own Project
 
 To install the published engine package in any external Node.js project:
 
@@ -49,115 +49,116 @@ await eventFlow.initAsync({ useQueue: true });
 
 ---
 
-## 🛠️ GitHub Use Cases: Production-Grade Operations
+## daily Developer Use Cases
 
-Here are three different developer automation use cases commonly executed in daily engineering tasks:
+Here are three real-world pipelines that developers run on a daily basis:
 
-### Use Case 1: Automated CI/CD Release Pipeline
-* **What it does**: Simulates running unit tests, compiling the production bundle, uploading to hosting (e.g. AWS S3/Vercel), and notifying Slack of successful deployment.
+### Use Case 1: AWS Database S3 Backup Sync
+* What it does: Uploads database assets to S3 and writes a local JSON receipt file.
 ```yaml
-name: "Automated CI/CD Pipeline"
-description: "Executes linting, unit tests, compiles bundle, and dispatches release alert"
+name: "AWS S3 Auto-Backup Flow"
+description: "Pushes local assets to S3 and registers the transaction"
 tasks:
-  run_linter:
-    description: "Analyzing code syntax and lint warnings"
+  upload_to_s3:
+    description: "Uploading files to S3 bucket: eventflow-backups-us-east-1"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
     parameters:
-      delay: 500
-  run_unit_tests:
-    description: "Running Jest unit test suites"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
-    parameters:
-      delay: 1000
+      delay: 1200
       error: false
-  deploy_assets:
-    description: "Uploading static bundles to Cloudflare Pages CDN"
+  register_backup_db:
+    description: "Saves S3 transaction metadata locally"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
     parameters:
       file:
-        name: "./deployment_receipt.json"
+        name: "./s3_backup_receipt.json"
         contents: {
-          project: "eventflow-dashboard",
-          commit: "504b2f3",
-          url: "https://eventflow-dashboard.pages.dev",
+          s3_url: "s3://eventflow-backups-us-east-1/backups/db-backup.tar.gz",
+          bytes_uploaded: 45291880,
+          region: "us-east-1",
           status: "SUCCESSFUL"
         }
-  slack_notification:
-    description: "Notifying DevOps Slack Channel of new release"
+  alert_completion:
+    description: "Notifies team channels of successful backup"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/logHandler.js"
     parameters:
       level: "info"
-      log: "🚀 [CI/CD] Deployment complete for commit 504b2f3. URL: https://eventflow-dashboard.pages.dev"
+      log: "[AWS-S3] Backup successfully verified. Object URL: s3://eventflow-backups-us-east-1/backups/db-backup.tar.gz"
 ```
 
-### Use Case 2: Automated Billing & PDF Invoice Compiler
-* **What it does**: Aggregates charge data, writes a local PDF invoice receipt summary, and logs a billing audit confirmation.
+### Use Case 2: DevOps Database Migration Rollback Checker
+* What it does: Verifies active migration logs, executes a rollback task on failure, and stores a rollback manifest.
 ```yaml
-name: "Automated Billing Pipeline"
-description: "Verifies subscription payment status and compiles invoice receipt details"
+name: "Database Migration Rollback Flow"
+description: "Checks migration status and triggers database rollback on warning thresholds"
 tasks:
-  verify_payment_intent:
-    description: "Checking Stripe payment authorization webhook status"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
-    parameters:
-      delay: 800
-  generate_pdf_invoice:
-    description: "Writing billing receipt to local manifest logs"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
-    parameters:
-      file:
-        name: "./stripe_invoice.json"
-        contents: {
-          customer: "CUST-98218",
-          invoice: "INV-2026-001",
-          subtotal: 49.00,
-          status: "PAID"
-        }
-  log_audit_trail:
-    description: "Pushes record of payment transaction to logging system"
-    blocking: true
-    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/logHandler.js"
-    parameters:
-      level: "info"
-      log: "💰 [BILLING-AUDIT] Invoice INV-2026-001 for customer CUST-98218 has been logged."
-```
-
-### Use Case 3: Server Telemetry Health Checks
-* **What it does**: Checks host system diagnostics, saves memory logs, and generates alerts on disk.
-```yaml
-name: "Telemetry Health Check Pipeline"
-description: "Verifies CPU load metrics and saves resource diagnostics data"
-tasks:
-  check_cpu_metrics:
-    description: "Running diagnostic host checks"
+  verify_migration_status:
+    description: "Checking migration error status logs"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
     parameters:
       delay: 500
-  write_resource_log:
-    description: "Writing telemetry usage stats to disk"
+      error: false
+  trigger_rollback:
+    description: "Executing rollback script for database recovery"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
+    parameters:
+      delay: 1500
+      error: false
+  write_rollback_receipt:
+    description: "Saving rollback action log locally"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
     parameters:
       file:
-        name: "./telemetry_usage.json"
+        name: "./db_rollback_manifest.json"
         contents: {
-          cpu_load_pct: 34.2,
-          free_memory_mb: 8192,
-          disk_usage_pct: 61.8,
-          status: "NORMAL"
+          status: "ROLLED_BACK",
+          version: "V1.0.4",
+          timestamp: "2026-07-12T00:50:00Z"
         }
-  report_normal_state:
-    description: "Logs confirmation of safe host operating metrics"
+  notify_admin:
+    description: "Logs rollback operation details"
     blocking: true
     handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/logHandler.js"
     parameters:
-      level: "info"
-      log: "🟢 [TELEMETRY] Host operating metrics normal. CPU load: 34.2%. Disk free: 38.2%."
+      level: "warn"
+      log: "[DEVOPS] Rollback executed successfully for version V1.0.4"
+```
+
+### Use Case 3: API Rate Limit Monitoring & Webhook Alerting
+* What it does: Monitors request telemetry logs, writes an alert payload file, and prints warning alerts to console logs.
+```yaml
+name: "API Rate Limit Monitoring"
+description: "Monitors client traffic telemetry logs and dispatches system warnings"
+tasks:
+  analyze_rate_limits:
+    description: "Scanning host connection rate telemetry"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/testHandler.js"
+    parameters:
+      delay: 600
+  write_incident_report:
+    description: "Writing rate limit alert info locally"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/fileHandler.js"
+    parameters:
+      file:
+        name: "./api_alert_report.json"
+        contents: {
+          ip_blocked: "192.168.1.45",
+          attempts: 120,
+          limit: 60,
+          status: "ALERT_TRIGGERED"
+        }
+  log_incident:
+    description: "Prints incident log details to warning logs"
+    blocking: true
+    handler: "../node_modules/@neeharikaa/event-stormer/taskHandlers/logHandler.js"
+    parameters:
+      level: "warn"
+      log: "[TRAFFIC-MONITOR] IP 192.168.1.45 blocked due to exceeding rate limit of 60 req/min"
 ```
