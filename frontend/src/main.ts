@@ -401,21 +401,21 @@ tasks:
   verify_user:
     description: "Checks if user exists and is verified"
     blocking: true
-    handler: "./taskHandlers/testHandler.js"
+    handler: "../taskHandlers/testHandler.js"
     parameters:
       delay: 1000
       error: false
   grant_access:
     description: "Grants access to system dashboard"
     blocking: true
-    handler: "./taskHandlers/logHandler.js"
+    handler: "../taskHandlers/logHandler.js"
     parameters:
       level: "info"
       log: "Access granted to user dashboard."
   save_profile:
     description: "Saves user profile metadata locally"
     blocking: true
-    handler: "./taskHandlers/fileHandler.js"
+    handler: "../taskHandlers/fileHandler.js"
     parameters:
       file:
         name: "./user_profile.json"
@@ -432,21 +432,21 @@ tasks:
   charge_card:
     description: "Charges the customer's payment card"
     blocking: true
-    handler: "./taskHandlers/testHandler.js"
+    handler: "../taskHandlers/testHandler.js"
     parameters:
       delay: 800
       error: false
   check_inventory:
     description: "Checks item availability in stock"
     blocking: true
-    handler: "./taskHandlers/testHandler.js"
+    handler: "../taskHandlers/testHandler.js"
     parameters:
       delay: 500
       error: false
   log_shipping:
     description: "Queues order shipment in warehouse"
     blocking: true
-    handler: "./taskHandlers/logHandler.js"
+    handler: "../taskHandlers/logHandler.js"
     parameters:
       level: "info"
       log: "Order payment confirmed. Shipping label generated."
@@ -458,21 +458,21 @@ tasks:
   step_one:
     description: "First step executing"
     blocking: true
-    handler: "./taskHandlers/testHandler.js"
+    handler: "../taskHandlers/testHandler.js"
     parameters:
       delay: 600
       error: false
   step_two:
     description: "Second step executing"
     blocking: true
-    handler: "./taskHandlers/testHandler.js"
+    handler: "../taskHandlers/testHandler.js"
     parameters:
       delay: 600
       error: false
   step_three:
     description: "Third step executing"
     blocking: true
-    handler: "./taskHandlers/testHandler.js"
+    handler: "../taskHandlers/testHandler.js"
     parameters:
       delay: 600
       error: false

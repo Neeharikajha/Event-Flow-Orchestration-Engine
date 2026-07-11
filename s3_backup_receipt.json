@@ -1,0 +1,6 @@
+{
+  "s3_url": "s3://eventflow-backups-us-east-1/backups/db-backup.tar.gz",
+  "bytes_uploaded": 45291880,
+  "region": "us-east-1",
+  "status": "SUCCESSFUL"
+}
